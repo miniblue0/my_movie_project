@@ -128,7 +128,7 @@ def load_to_sql(df_movies, engine):
                     
                     #commit para guardar los datos
                     connection.commit()
-                    print('Proceso completado, datos cargados/Actualizados a la base de datos.')
+                print('Proceso completado, datos cargados/Actualizados a la base de datos.')
                     
         except Exception as e:
             print(f"Error al cargar los datos a SQL: {str(e)}")
