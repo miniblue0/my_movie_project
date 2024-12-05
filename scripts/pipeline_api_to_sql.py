@@ -44,7 +44,7 @@ def transform_movies(movies):
             "vote_count": movie.get('vote_count'),
             "popularity": movie.get('popularity'),
             "overview": movie.get('overview'),
-            "genre_ids": ",".join(map(str, movie.get('genre_ids', []))) #["20", "10", "00"]de a "20,10,00"                                    #movie.get(...)devuelve el diccionario. con map(str, ) convierte la salida anterior en texto. y con el ",".join(..) los separo con comas.
+            "genre_ids": ",".join(map(str, movie.get('genre_ids', []))) #["20", "10", "00"] --- "20,10,00"       #movie.get(...)devuelve el diccionario. con map(str, ) convierte la salida anterior en texto. y con el ",".join(..) los separo con comas.
         } for movie in results]) #para cada pelicula de la lista de resultados
 
         #inserto una nueva fila y dependiendo de la popularidad se asigna baja, media o alta
@@ -57,7 +57,7 @@ def transform_movies(movies):
         return df_movies
        
     else:
-        print("Error al transformar los datos" + df_movies)
+        print("Error al transformar los datos", df_movies)
 
 
 def load_to_sql(df_movies, engine):
@@ -67,15 +67,15 @@ def load_to_sql(df_movies, engine):
                 for _, row in df_movies.iterrows():
                     row = row.copy()
                     
-                    # Verificación de valores nulos en release_date y asignar pd.NaT
+                    #reemplazo los valores null por None para no tener errores de datos
                     if pd.isnull(row['release_date']):
-                        row['release_date'] = pd.NaT  # Usar pd.NaT para fechas nulas
-                    # Convertir la fila a un diccionario
-                    row_dict = row.to_dict()
-                    # Imprimir la fila procesada para verificación
-                    print(row)
+                        row['release_date'] = pd.NaT  #cambio las fechas nulas
 
-                    # Preparar la consulta UPSERT para Movies
+                    row_dict = row.to_dict() #cambio el pandas a un diccionario de python, para poder hacer .execute luego
+                    
+                    #print(row_dict) #print para debuggear :)
+
+                    #armo el UPSERT para insertar/actualizar las peliculas en la tabla movies
                     UPSERT_MOVIES = text("""
                         MERGE INTO movies AS target
                         USING (SELECT :movie_id AS movie_id,
@@ -103,10 +103,10 @@ def load_to_sql(df_movies, engine):
                             VALUES (source.movie_id, source.title, source.release_date, source.original_language, source.vote_average, source.vote_count, source.popularity, source.overview, source.genre_ids);
                     """)
                     
-                    # Ejecutar el UPSERT para Movies
+                    #ejecuto el UPSERT en la tabla movies
                     connection.execute(UPSERT_MOVIES, row_dict)
                     
-                    # Preparar la consulta UPSERT para Movies Popularity
+                    #armo la query UPSERT para comparar los datos y evitar duplicados
                     UPSERT_POPULARITY = text("""
                         MERGE INTO movies_popularity AS target
                         USING (SELECT :movie_id AS movie_id,
@@ -120,13 +120,13 @@ def load_to_sql(df_movies, engine):
                             VALUES (source.movie_id, source.popularity_category);
                     """)
                     
-                    # Ejecutar el UPSERT para Popularity
+                    #ejecuto el UPSERT a la tabla popularity
                     connection.execute(UPSERT_POPULARITY, {
                         "movie_id": row_dict['movie_id'],
                         "popularity_category": row_dict['popularity_category']
                     })
                     
-                    # Commit para guardar los cambios en la base de datos
+                    #commit para guardar los datos
                     connection.commit()
                     print('Proceso completado, datos cargados/Actualizados a la base de datos.')
                     
@@ -150,16 +150,4 @@ def etl():
 if __name__ == "__main__":
         etl()
 
-    
-
-     
-     
-
-
-
-
-
-
-
 '''{'adult': False, 'backdrop_path': '/tElnmtQ6yz1PjN1kePNl8yMSb59.jpg', 'genre_ids': [16, 12, 10751, 35], 'id': 1241982, 'original_language': 'en', 'original_title': 'Moana 2', 'overview': "After receiving an unexpected call from her wayfinding ancestors, Moana journeys alongside Maui and a new crew to the far seas of Oceania and into dangerous, long-lost waters for an adventure unlike anything she's ever faced.", 'popularity': 6106.764, 'poster_path': '/yh64qw9mgXBvlaWDi7Q9tpUBAvH.jpg', 'release_date': '2024-11-27', 'title': 'Moana 2', 'video': False, 'vote_average': 7.0, 'vote_count': 291},'''
-
