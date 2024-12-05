@@ -18,6 +18,10 @@ CREATE TABLE movies_popularity (
 );
 
 
+SELECT * FROM movies WHERE popularity >= 3000
+GO
+SELECT * FROM movies_popularity WHERE popularity_category = 'Alta' 
+
 SELECT * FROM movies
 GO
 SELECT * FROM movies_popularity
