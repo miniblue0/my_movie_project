@@ -57,7 +57,7 @@ def transform_movies(movies):
         return df_movies
        
     else:
-        print("Error al transformar los datos", df_movies)
+        print("error al transformar los datos", df_movies)
 
 
 def load_to_sql(df_movies, engine):
@@ -128,22 +128,22 @@ def load_to_sql(df_movies, engine):
                     
                     #commit para guardar los datos
                     connection.commit()
-                print('Proceso completado, datos cargados/Actualizados a la base de datos.')
+                print('proceso completado, datos cargados/actualizados a la base de datos.')
                     
         except Exception as e:
             print(f"Error al cargar los datos a SQL: {str(e)}")
             return None
 
 def etl():
-    print(f'** Extrayendo las peliculas mas populares de la API... **')
+    print(f'** extrayendo las peliculas mas populares de la API... **')
     raw_data = extract_popular_movies(api_token)
     if raw_data is not None:
-        print('** Datos extraidos correctamente')
-        print(f'\n** Transformando datos...')
+        print('** datos extraidos correctamente')
+        print(f'\n** transformando datos...')
         transformed_data = transform_movies(raw_data)
     if transformed_data is not None:
-        print('\nDatos transformados correctamente')
-        print('Cargando datos a las tablas...')
+        print('\ndatos transformados correctamente')
+        print('cargando datos a las tablas...')
         load_to_sql(transformed_data, engine)
         input('************')
 
