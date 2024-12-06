@@ -167,7 +167,6 @@ def exportar_csv(engine, ruta):
 
 if __name__ == "__main__":
         etl()
-        #resultados = f"movies_data_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
         exportar_csv(engine, './')
 
 '''{'adult': False, 'backdrop_path': '/tElnmtQ6yz1PjN1kePNl8yMSb59.jpg', 'genre_ids': [16, 12, 10751, 35], 'id': 1241982, 'original_language': 'en', 'original_title': 'Moana 2', 'overview': "After receiving an unexpected call from her wayfinding ancestors, Moana journeys alongside Maui and a new crew to the far seas of Oceania and into dangerous, long-lost waters for an adventure unlike anything she's ever faced.", 'popularity': 6106.764, 'poster_path': '/yh64qw9mgXBvlaWDi7Q9tpUBAvH.jpg', 'release_date': '2024-11-27', 'title': 'Moana 2', 'video': False, 'vote_average': 7.0, 'vote_count': 291},'''
