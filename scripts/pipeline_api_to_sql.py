@@ -143,6 +143,7 @@ def etl():
     if raw_data:
         print("** datos extraidos correctamente. \ntransformando datos... **")
         transformed_data = transform_movies(raw_data)
+
         if transformed_data is not None:
             print("** datos transformados correctamente. cargando a la base de datos... **")
             load_to_sql(transformed_data, engine)
@@ -152,7 +153,7 @@ def etl():
 def exportar_csv(engine, ruta):
     try:
         csv_movies= f'SELECT * FROM movies' #hago un select a ambas tablas para guardar los resultados
-        csv_popularity= f'SELECT *FROM movies_popularity' 
+        csv_popularity= f'SELECT * FROM movies_popularity' 
 
         with engine.connect() as connection:
             df_movies = pd.read_sql(csv_movies, connection) #guardo los resultados en un df de pandas
@@ -160,6 +161,7 @@ def exportar_csv(engine, ruta):
 
         df_movies.to_csv("movies_data.csv", index=False, encoding='utf-8') #transformo los df en csv (algunas peliculas tienen caracteres especiales, por eso el utf-8)
         df_popularity.to_csv("movies_popularity_data.csv", index=False, encoding='utf-8')
+        print('** tablas exportadas a csv correctamente **')
 
     except Exception as e:
         print(f'error al exportar los datos al csv: {e}')
