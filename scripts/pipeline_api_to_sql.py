@@ -30,7 +30,7 @@ def extract_popular_movies(api_key):
             movies = data.get("results", []) #guardo la lista de reultados con las peliculas
             all_movies.extend(movies) #inserto las peliculas en la lista de peliculas totales
         else:
-            print(f"Error al extraer los datos en la página {page}: {response.status_code}")
+            print(f"Error al extraer los datos en la pagina {page}: {response.status_code}")
             break
     return all_movies #retorno la lista cargada con todas las peliculas de las paginas
 #extract_popular_movies(api_key)
